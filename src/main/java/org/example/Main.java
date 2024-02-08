@@ -5,14 +5,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc=new Scanner(System.in);
-        Integer[] preciosPlay={300000,900000,2500000};
+        int[] cantidadCompras=new int[6];
+        Integer[] preciosPlay={300000,900000,2500000,80000,200000,350000};
+        Integer[] preciosControles={80000,200000,350000};
         Double totalCompra=0.0;
-        int contadorPs3=0;
-        int contadorPs4=0;
-        int contadorPs5=0;
-        int contadorC3=0;
-        int contadorC4=0;
-        int contadorC5=0;
         int opcionCompra;
         Double descuentoAntiguo=0.2;
         String opcionAntiguedad;
@@ -25,22 +21,54 @@ public class Main {
             MenuPrecios();
             System.out.println("adicional recuerde que cada consola viene con un control y por ser cliente" +
                     "antiguo tiene un 20% de descuento en su compra y un control extra");
-            opcionCompra=sc.nextInt();
             do {
-                System.out.print("escoja una opcion de compra o presione 0 para salir : ");
+                System.out.print("escoja una opcion de compra o presione 0 para salir y mostrar el total: ");
                 opcionCompra=sc.nextInt();
-                int[]cantidadCompras=opcionesProductos(opcionCompra);
+                cantidadCompras=opcionesProductos(opcionCompra,preciosPlay.length);
+                totalCompra+=calcularTotal(cantidadCompras,preciosPlay);
 
             }while (opcionCompra!=0);
+            System.out.println(cantidadCompras);
+            System.out.println(totalCompra);
+
+
+            Double totalConDescuento=calcularDescuento(totalCompra,20);
+            System.out.println("el total de su compra es de: $"+totalConDescuento);
         } else if (opcionAntiguedad.equals("nuevo")) {
             MenuPrecios();
             System.out.println("promoción para clientes nuevos, cada consola viene con un control pero si compras" +
                     "otro extra podras escoger entre 5 juegos ");
             do {
-                System.out.print("escoja una opcion de compra o presione 0 para salir : ");
+                System.out.print("escoja una opcion de compra o presione 0 para salir y mostrar el total : ");
                 opcionCompra=sc.nextInt();
-                int[]cantidadCompras=opcionesProductos(opcionCompra);
+                cantidadCompras=opcionesProductos(opcionCompra,preciosPlay.length);
+                totalCompra+=calcularTotal(cantidadCompras,preciosPlay);
             }while (opcionCompra!=0);
+
+            System.out.println("desea llevar la promoción de comprar un control extra y escoger 5 juegos " +
+                    "si/no?");
+            sc.nextLine();
+            String opcionNuevo=sc.nextLine();
+            if (opcionNuevo.equals("si")){
+                System.out.println("que control desea llevar");
+                System.out.println("1.control ps3-->80.000");
+                System.out.println("2.control ps4-->200.000");
+                System.out.println("3.control ps5-->350.000");
+
+
+                int opcionControl=sc.nextInt();
+                int[] cantidadControles=opcionesProductos(opcionControl,3);
+                Double totalCompraAcumulada=calcularTotal(cantidadControles,preciosControles)+totalCompra;
+                System.out.println("el total de la compra es de: "+totalCompraAcumulada);
+
+
+            } else if (opcionNuevo.equals("no")) {
+
+                System.out.println("el total de su compra es de: $"+totalCompra);
+            }else{
+
+                System.out.println("opcion incorrecta solo responda si/no");
+            }
         }else {
             System.out.println("error de ingreso, digite antiguo o nuevo");
         }
@@ -53,25 +81,27 @@ public class Main {
         System.out.println("5.control ps4-->200.000");
         System.out.println("6.control ps5-->350.000");
     }
-    public static int[] opcionesProductos(int opcion){
-        int []cantidadCompras=new int[6];
+    public static int[] opcionesProductos(int opcion, int longitudArreglo){
+        int []cantidadCompras=new int[longitudArreglo];
 
-        if (opcion==1){
-            cantidadCompras[0]++;
-        } else if (opcion==2){
-            cantidadCompras[1]++;
-        } else if (opcion==3){
-            cantidadCompras[2]++;
-        } else if (opcion==4){
-            cantidadCompras[3]++;
-        } else if (opcion==5){
-            cantidadCompras[4]++;
-        } else if (opcion==6){
-            cantidadCompras[5]++;
-        }else {
-            System.out.println("opcion incorrecta");
+        if (opcion >= 1 && opcion <= 6) {
+            cantidadCompras[opcion - 1]++;
+        } else {
+            System.out.println("Opción incorrecta. Debe estar entre 1 y 6.");
         }
+
         return cantidadCompras;
+    }
+
+    public static double calcularTotal(int[]numeroProductos,Integer[]precios){
+        double resultado=0.0;
+        for (int i=0;i<numeroProductos.length;i++){
+            resultado+=numeroProductos[i]*precios[i];
+        }
+        return resultado;
+    }
+    public static double calcularDescuento(double valor, int porcentajeDescuento){
+        return valor-=(valor*porcentajeDescuento/100);
     }
 
 
